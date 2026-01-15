@@ -1,27 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
 
     public Rigidbody2D rb;
+    public GameObject Goal;
     public GameObject Camera;
-    float jumpForce = 680.0f;
+    float walkSpeed = 2.5f;
+    float jumpForce = 500.0f;
 
     void Start()
     {
-        
+        SceneManager.UnloadSceneAsync("ClearScene");
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.A)) { rb.AddForce(transform.right * -1, ForceMode2D.Force); }
-        if (Input.GetKey(KeyCode.D)) { rb.AddForce(transform.right * 1, ForceMode2D.Force); }
+        if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)) { rb.velocity = new Vector2(-1 * walkSpeed, rb.velocity.y); }
+        else if (!Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) { rb.velocity = new Vector2(walkSpeed, rb.velocity.y); }
         if (Input.GetKeyDown(KeyCode.Space)) { rb.AddForce(transform.up * jumpForce); }
+        if (transform.position.y < -5) { transform.Translate(0, 0 - transform.position.y, 0); }
 
 
         Camera.transform.Translate(0, transform.position.y - Camera.transform.position.y, 0);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision) {
+        Debug.Log("ê°€ë™");
+        if (collision.gameObject.name == "flag") {
+            SceneManager.LoadScene("ClearScene");
+        }
     }
 
     /*public GameObject Camera;
@@ -58,9 +69,9 @@ public class PlayerControl : MonoBehaviour
     }
     public void Heading (float h)
     {
-        VertMove(0.75f + h - transform.position.y);        // Å° 0.75Á¤µµ
+        VertMove(0.75f + h - transform.position.y);        // Å° 0.75ï¿½ï¿½ï¿½ï¿½
         vert = 0;
-        Debug.Log("²á");
+        Debug.Log("ï¿½ï¿½");
     }
     public void Landed (float h)
     {
